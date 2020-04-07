@@ -15,6 +15,6 @@ def mkcythonexts(base, allowed_ext={'.pyx', '.py'}):
         if src.parent == base: continue
         name = str(src.parent) + '.' + src.stem
         exts += [Extension(name, [str(src)])]
-    return cythonize(exts, annotate=False)
+    return cythonize(exts, annotate=False, language_level='3')
 
 setup( ext_modules = mkcythonexts(Path('.')) )
