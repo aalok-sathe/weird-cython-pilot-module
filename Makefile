@@ -6,6 +6,6 @@ clean:
 	python3 setup.py clean
 	
 cleanall: clean
-	rm -f **/*.so *.so 
+	rm -rf **/*.so *.so **/*.cpp *.cpp **/__pycache__ build
 
 FORCE:
