@@ -1,6 +1,5 @@
 
-from __future__ import print_function
-cimport mathic
+from . cimport mathic
 from .mathic cimport plus
 from .advancedmath import minus
 
