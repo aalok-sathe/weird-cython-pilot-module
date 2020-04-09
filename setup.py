@@ -8,6 +8,7 @@ from glob import glob
 from pathlib import Path
 
 Options.cimport_from_pyx = True
+# Options.embed = True
 
 def mkcythonexts(base, allowed_ext={'.pyx', '.py'}, allow_cwd=False, 
                  exclude={'setup.py'}):
@@ -26,9 +27,10 @@ def mkcythonexts(base, allowed_ext={'.pyx', '.py'}, allow_cwd=False,
         if str(src) in exclude: continue
         print('INFO found matching source', src, name)
         exts += [Extension(name, [str(src)], language='c++')]
-    return cythonize(exts, annotate=False, 
+    return cythonize(exts, annotate=False,
                      compiler_directives={'language_level': '3str',
-                                          'annotation_typing': True})
+                                          'annotation_typing': True,
+                                          'c_string_encoding': 'utf-8'})
 
 class build_ext(build_ext):
     def build_extensions(self):
@@ -39,7 +41,7 @@ class build_ext(build_ext):
 setup(
         name = 'cymodule',
         ext_modules = mkcythonexts(Path('.'), allow_cwd=True,
-                                   exclude=['setup.py']),
+                                   allowed_ext=['.pyx'], exclude=['setup.py']),
         include_dirs=['.'],
         package_data = { 'cymodule': map(str, Path('.').rglob('*.pxd')) },
         cmdclass={'build_ext': build_ext},
