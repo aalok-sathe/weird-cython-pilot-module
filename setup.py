@@ -1,13 +1,13 @@
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from Cython.Build import cythonize
-from Cython.Compiler import Options as cyopts
+from Cython.Compiler import Options
 
 import os
 from glob import glob
 from pathlib import Path
 
-cyopts.cimport_from_pyx = True
+Options.cimport_from_pyx = True
 
 def mkcythonexts(base, allowed_ext={'.pyx', '.py'}, allow_cwd=False, 
                  exclude={'setup.py'}):
@@ -27,7 +27,8 @@ def mkcythonexts(base, allowed_ext={'.pyx', '.py'}, allow_cwd=False,
         print('INFO found matching source', src, name)
         exts += [Extension(name, [str(src)], language='c++')]
     return cythonize(exts, annotate=False, 
-                     compiler_directives={'language_level': '3'})
+                     compiler_directives={'language_level': '3',
+                                          'annotation_typing': True})
 
 class build_ext(build_ext):
     def build_extensions(self):
