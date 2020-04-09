@@ -41,5 +41,6 @@ setup(
         ext_modules = mkcythonexts(Path('.'), allow_cwd=True,
                                    exclude=['setup.py']),
         include_dirs=['.'],
+        package_data = { 'cymodule': map(str, Path('.').rglob('*.pxd')) },
         cmdclass={'build_ext': build_ext},
     )
