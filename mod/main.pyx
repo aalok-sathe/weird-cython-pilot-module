@@ -2,8 +2,10 @@
 from . cimport mathic
 from .mathic cimport plus
 from .advancedmath import minus
+from .submod cimport util
 
 from libcpp.map cimport map as hashmap
+from libcpp.string cimport string
 
 from math import pi
 
@@ -11,7 +13,7 @@ from math import pi
 cdef hashmap[int, unsigned long long] memo 
 cpdef unsigned long long fib(long n):
     if memo.find(n) != memo.end(): 
-        print('found in memo!', n)
+        util.imprint(['found in memo!', n])
         return memo[n]
     if n <= 1:
         memo[n] = n

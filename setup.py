@@ -1,12 +1,13 @@
 from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
 from Cython.Build import cythonize
 from Cython.Compiler import Options as cyopts
+
+import os
 from glob import glob
 from pathlib import Path
 
-
 cyopts.cimport_from_pyx = True
-
 
 def mkcythonexts(base, allowed_ext={'.pyx', '.py'}, allow_cwd=False, 
                  exclude={'setup.py'}):
@@ -18,19 +19,26 @@ def mkcythonexts(base, allowed_ext={'.pyx', '.py'}, allow_cwd=False,
     exts = []
     for src in base.rglob('*.py*'):
         if src.suffix not in allowed_ext: continue
-        name = str(src.parent) + '.' + src.stem
+        name = '.'.join(str(src.parent).split('/')) + '.' + src.stem
         if allow_cwd and src.parent == base:
             name = src.stem
         elif src.parent == base: continue
         if str(src) in exclude: continue
         print('INFO found matching source', src, name)
         exts += [Extension(name, [str(src)], language='c++')]
-    return cythonize(exts, annotate=False,
+    return cythonize(exts, annotate=False, 
                      compiler_directives={'language_level': '3'})
+
+class build_ext(build_ext):
+    def build_extensions(self):
+        if '-Wstrict-prototypes' in self.compiler.compiler_so:
+            self.compiler.compiler_so.remove('-Wstrict-prototypes')
+        super().build_extensions()
 
 setup(
         name = 'cymodule',
         ext_modules = mkcythonexts(Path('.'), allow_cwd=True,
                                    exclude=['setup.py']),
-        include_dirs=['.']
+        include_dirs=['.'],
+        cmdclass={'build_ext': build_ext},
     )
